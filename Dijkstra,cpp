@@ -1,0 +1,70 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<utility>
+using namespace std;
+
+int extracMin(vector<int> &Q, vector<int> &d){
+    int min = INT16_MAX;
+    int node = 0;
+
+    for(int i = 1; i < d.size(); i++){
+        if(find(Q.begin(), Q.end(), i) == Q.end() && d[i] < min){
+            min = d[i];
+            node = i;
+        }
+    }
+
+    return node;
+}
+
+void Dijkstra(vector<vector<pair<int, int>>> G, int r, int t){
+    vector<int> S;
+    vector<int> d;
+    vector<int> prev(G.size(), 0);
+    d.resize(G.size(), INT16_MAX);
+
+    d[r] = 0;
+
+    while(S.size() < G.size() - 1){
+        int u = extracMin(S, d);
+        S.push_back(u);
+
+        for(auto edge : G[u]){
+            int v = edge.first;
+            int w = edge.second;
+             if (find(S.begin(), S.end(), v) == S.end() && d[u] + w < d[v]){
+                d[v] = d[u] + w;
+                prev[v] = u;
+             }
+        }
+    }
+
+    
+    for(int i = 1; i < d.size(); i ++){
+        cout << prev[i] << " ";
+    }
+
+    if (d[t] == INT16_MAX) cout << "Impossible" << endl;
+    else cout << d[t] << endl;
+}
+
+
+
+int main(){
+    int n, m, r, t;
+    cin >> n >> m;
+     vector<vector<pair<int, int>>> graph(n + 1);
+
+    for(int i = 0; i < m; i++){
+        int x, y, w;
+        cin >> x >> y >> w;
+        graph[x].push_back(make_pair(y, w));
+    }
+
+    cin >> r >> t;
+
+    Dijkstra(graph, r, t);
+
+    return 0;
+}
